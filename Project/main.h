@@ -5,4 +5,12 @@
 #ifndef PROJECT_MAIN_H
 #define PROJECT_MAIN_H
 
+using namespace std;
+
+bool readString(string &x);
+bool readChar(char &c);
+bool readInt(int &i);
+int mod(int a, int b);
+
+
 #endif //PROJECT_MAIN_H

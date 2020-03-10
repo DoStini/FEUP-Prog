@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/game.cpp
+iostream
+-
+game.h
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/game.h
+gameMenu.h
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/gameMenu.h
+main.h
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/main.h
+
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/game.h
+
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/gameMenu.h
+
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/main.h
+
