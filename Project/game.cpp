@@ -19,7 +19,7 @@ enum state {
 
 
 struct gameData {
-    int board[12]; // 0 a 5 é do player 1, 6 a 11 é do player 2
+    int board[2][6];
     int score[2];
     int rounds;
     string playerNames[2];
@@ -35,8 +35,8 @@ void showBoard(gameData currGame){
     cout << "----------------------" << endl;
     for (int player = 0; player < 2; player++){
         for (int i = 0; i < 6; i++){
-            cout << currGame.board[i + 6 * player] << "\t";
-        }
+            cout << currGame.board[player][abs(5*mod(player+1, 2) - i)] << "\t"; // Invert player's 0 order:        // 5 4 3 2 1 0
+        }                                                                                                                     // 0 1 2 3 4 5
         cout << endl;
     }
     cout << "----------------------" << endl;
@@ -46,7 +46,7 @@ void showBoard(gameData currGame){
 
 
 bool round(gameData &currGame, int player) {
-    // USE THIS FUNCTION TO ROATE SEEDS
+    // USE THIS FUNCTION TO ROTATE SEEDS
 
     int position;
     cout << "Please enter a position to remove your seeds (1-6): ";
@@ -61,17 +61,17 @@ bool round(gameData &currGame, int player) {
         break;
     }
 
-    position = position - 1 + 6 * player;
-    int seeds = currGame.board[position + 6*player];
-    position -= 1;
+    int seeds = currGame.board[player][position-1];
+    currGame.board[player][position-1] = 0;
 
-    for (int i = position; i > position - seeds; i--){
-        if((mod(i, 12)) < 6){
-            player = 0;
-        }else{
-            player = 1;
+    int temp = position;
+    for (int i = position; i < position + seeds; i++){
+        if(temp > 5) {
+            player = mod(player + 1, 2);
+            temp = 0;
         }
-        currGame.board[5*player + abs(i)] += 1;
+        currGame.board[player][temp] += 1;
+        temp += 1;
     }
     cout << "\n";
 }
@@ -128,11 +128,14 @@ void gameSetup() {
     struct gameData currGame;
 
     // Setting starting value in the board
-    for (int i = 0; i < 12; i++) {
-        currGame.board[i] = 4;
+    for (int pl = 0; pl < 2; pl++){
+        for (int i = 0; i < 6; i++) {
+            currGame.board[pl][i] = 4;
+        }
     }
+
     currGame.score[0] = 0;
-    currGame.score[1] = 2;
+    currGame.score[1] = 0;
 
 
     // CHOOSING PLAYERS NAMES
@@ -147,7 +150,7 @@ void gameSetup() {
                 continue;
             }
             currGame.playerNames[i] = name;
-            if (currGame.playerNames[(i-1)%2] == currGame.playerNames[i]){
+            if (currGame.playerNames[mod(i-1,2)] == currGame.playerNames[i]){
                 printf("Cant be same name as the other player, re-enter: ");
                 continue;
             }
@@ -158,6 +161,8 @@ void gameSetup() {
 
     // CHOOSE RANDOM PLAYER TO START
 
+    showBoard(currGame);
+    round(currGame, 0);
     showBoard(currGame);
     round(currGame, 1);
     showBoard(currGame);
