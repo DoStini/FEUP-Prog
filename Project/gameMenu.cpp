@@ -14,7 +14,7 @@ using namespace std;
 
 
 void play() {
-
+    gameSetup();
 }
 
 void options() {

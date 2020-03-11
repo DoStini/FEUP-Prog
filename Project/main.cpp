@@ -14,6 +14,7 @@ bool readString(string &s) {
         cin.clear();
         return false;
     } else if (cin.peek() != '\n') {
+        cin.ignore();
         return false;
     } else {
         return true;

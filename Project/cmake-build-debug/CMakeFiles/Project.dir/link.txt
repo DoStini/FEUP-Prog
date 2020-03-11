@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/Project.dir/main.cpp.o CMakeFiles/Project.dir/gameMenu.cpp.o CMakeFiles/Project.dir/game.cpp.o  -o Project 
+/usr/bin/c++  -g   CMakeFiles/Project.dir/main.cpp.o CMakeFiles/Project.dir/gameMenu.cpp.o CMakeFiles/Project.dir/game.cpp.o CMakeFiles/Project.dir/fileManager.cpp.o  -o Project 

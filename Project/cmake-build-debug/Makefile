@@ -123,6 +123,33 @@ Project/fast:
 	$(MAKE) -f CMakeFiles/Project.dir/build.make CMakeFiles/Project.dir/build
 .PHONY : Project/fast
 
+fileManager.o: fileManager.cpp.o
+
+.PHONY : fileManager.o
+
+# target to build an object file
+fileManager.cpp.o:
+	$(MAKE) -f CMakeFiles/Project.dir/build.make CMakeFiles/Project.dir/fileManager.cpp.o
+.PHONY : fileManager.cpp.o
+
+fileManager.i: fileManager.cpp.i
+
+.PHONY : fileManager.i
+
+# target to preprocess a source file
+fileManager.cpp.i:
+	$(MAKE) -f CMakeFiles/Project.dir/build.make CMakeFiles/Project.dir/fileManager.cpp.i
+.PHONY : fileManager.cpp.i
+
+fileManager.s: fileManager.cpp.s
+
+.PHONY : fileManager.s
+
+# target to generate assembly for a file
+fileManager.cpp.s:
+	$(MAKE) -f CMakeFiles/Project.dir/build.make CMakeFiles/Project.dir/fileManager.cpp.s
+.PHONY : fileManager.cpp.s
+
 game.o: game.cpp.o
 
 .PHONY : game.o
@@ -213,6 +240,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... Project"
 	@echo "... edit_cache"
+	@echo "... fileManager.o"
+	@echo "... fileManager.i"
+	@echo "... fileManager.s"
 	@echo "... game.o"
 	@echo "... game.i"
 	@echo "... game.s"

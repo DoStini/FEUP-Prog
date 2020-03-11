@@ -30,8 +30,8 @@ struct gameData {
 
 void showBoard(gameData currGame){
 
-    cout << "\t" << currGame.playerNames[0] << "'s Points: " << currGame.score[0] << endl << endl;
-    cout << "1\t2\t3\t4\t5\t6" << endl;
+    cout << "\n\t" << currGame.playerNames[0] << "'s Points: " << currGame.score[0] << endl << endl;
+    cout << "6\t5\t4\t3\t2\t1" << endl;
     cout << "----------------------" << endl;
     for (int player = 0; player < 2; player++){
         for (int i = 0; i < 6; i++){
@@ -49,8 +49,7 @@ bool round(gameData &currGame, int player) {
     // USE THIS FUNCTION TO ROTATE SEEDS
 
     int position;
-    cout << "Please enter a position to remove your seeds (1-6): ";
-
+    cout << "\nThis is your turn " << currGame.playerNames[player] << "\nPlease enter a position to remove your seeds (1-6): ";
 
     while(1){
         bool valid = readInt(position);
@@ -65,20 +64,47 @@ bool round(gameData &currGame, int player) {
     currGame.board[player][position-1] = 0;
 
     int temp = position;
+    bool canConquer = false; // When the seeds are on the other
     for (int i = position; i < position + seeds; i++){
         if(temp > 5) {
+            canConquer = true;
             player = mod(player + 1, 2);
             temp = 0;
         }
         currGame.board[player][temp] += 1;
-        temp += 1;
+        if (currGame.board[player][temp] == 2 || currGame.board[player][temp] == 3){ // MISSING HERE A CAN CONQUER
+            currGame.score[mod(player + 1, 2)] += currGame.board[player][temp]; // Add points to the other player
+            currGame.board[player][temp] = 0;
+        }
+        temp++;
     }
     cout << "\n";
+    showBoard(currGame);
+    return true;
+}
+
+
+void win(int player, gameData currGame){
+    cout << "\n\nGame ended in " << currGame.rounds << "!" << endl;
+    cout << "The winner of the game is " << currGame.playerNames[player] << endl;
 }
 
 
 void gameManager(gameData currGame) {
-    enum state currState = P1;
+
+    // Choose random player to start
+    srand(time(NULL));
+    int startingPlayer = random()%2;
+
+    cout << "\nPlayer starting is " << currGame.playerNames[startingPlayer] << ". Good luck!" << endl;
+
+    enum state currState;
+    if (startingPlayer == 0){
+        currState = P1;
+    }
+    else{
+        currState = P2;
+    }
 
     bool end = false;
 
@@ -86,13 +112,13 @@ void gameManager(gameData currGame) {
         switch (currState) {
             case P1:{
                 bool status = round(currGame, 0);
-                if (status) {
+                if (status) { // ALTERAR ISTO PARA MAIS ABAIXO PARA SER MAIS EFICIENTE
                     currState = P2;
                 }
                 if(currGame.score[0] >= 25){
                     currState = W1;
                 }
-                else if(currGame.score[0] == 24 && currGame.score[0] == 24){
+                else if(currGame.score[0] == 24 && currGame.score[1] == 24){
                     currState = T;
                 }
                 break;
@@ -113,7 +139,11 @@ void gameManager(gameData currGame) {
             }
 
             case W1:{
+                win(0, currGame);
+            }
 
+            case W2:{
+                win(1, currGame);
             }
         }
     }
@@ -162,10 +192,5 @@ void gameSetup() {
     // CHOOSE RANDOM PLAYER TO START
 
     showBoard(currGame);
-    round(currGame, 0);
-    showBoard(currGame);
-    round(currGame, 1);
-    showBoard(currGame);
-    //gameManager(currGame)
-
+    gameManager(currGame);
 }
