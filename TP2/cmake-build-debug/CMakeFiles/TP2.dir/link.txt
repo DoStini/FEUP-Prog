@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/TP2.dir/main.cpp.o  -o TP2 

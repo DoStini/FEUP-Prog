@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/TP2/main.cpp
+iostream
+-
+cmath
+-
+climits
+-
+iomanip
+-
+stdlib.h
+-
+

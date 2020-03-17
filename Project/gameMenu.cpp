@@ -58,14 +58,13 @@ void run() {
 
         string cmd;
         cin >> cmd;
-
+        // Use here Read String
         if (cin.fail()) {
             printf("Input Invalid\n\n");
             cin.ignore(1000, '\n');
             cin.clear();
         } else if (cin.peek() != '\n') {
             printf("Input Invalid\n\n");
-            cin.ignore(1000, '\n');
             cin.clear();
         } else {
             switch (cmdToChar[cmd]) {

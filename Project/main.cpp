@@ -2,6 +2,7 @@
 #include "gameMenu.h"
 #include "game.h"
 
+
 using namespace std;
 
 
@@ -62,6 +63,27 @@ int mod(int a,int b){
     }
 }
 
+int sumArray(int array[], int len){
+    int sum = 0;
+
+    for(int i = 0; i < len; i++){
+        sum += array[i];
+    }
+
+    return sum;
+}
+
+bool valueInArray(int value, int array[]){
+    int size = sizeof(array)/ sizeof(int);
+
+    for(int i = 0; i < size; i++){
+        if(array[i] == value){
+            return true;
+        }
+    }
+
+    return false;
+}
 
 int main() {
     gameSetup();
