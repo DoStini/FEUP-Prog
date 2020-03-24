@@ -1,7 +1,11 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include <unistd.h>
 #include "game.h"
 #include "gameMenu.h"
 #include "main.h"
+#include "bot.h"
 
 
 using namespace std;
@@ -18,35 +22,35 @@ enum state {
 };
 
 
-struct gameData {
-    int board[2][6];
-    int score[2];
-    int rounds;
-    string playerNames[2];
-};
-
-
-
-
 void showBoard(gameData currGame){
 
-    cout << "\n\t" << currGame.playerNames[0] << "'s Points: " << currGame.score[0] << endl << endl;
+    cout << COLORS[currGame.playerColors[0][0]] << "\n\t" << currGame.playerNames[0] << "'s Points: " << currGame.score[0] << endl << endl;
+    cout << COLORS["RESET"];
     cout << "6\t5\t4\t3\t2\t1" << endl;
     cout << "----------------------" << endl;
     for (int player = 0; player < 2; player++){
         for (int i = 0; i < 6; i++){
-            cout << currGame.board[player][abs(5*mod(player+1, 2) - i)] << "\t"; // Invert player's 0 order:        // 5 4 3 2 1 0
-        }                                                                                                                     // 0 1 2 3 4 5
+            int nSeeds = currGame.board[player][abs(5*mod(player+1, 2) - i)];             // Invert player's 0 order:        // 5 4 3 2 1 0
+            if (nSeeds == 1 || nSeeds == 2){                                                                                           // 0 1 2 3 4 5
+                cout << COLORS[currGame.playerColors[player][0]] << nSeeds << "\t"; // In danger
+                cout << COLORS["RESET"];
+            }
+            else{
+                cout << COLORS[currGame.playerColors[player][1]] << nSeeds << "\t"; // Not in danger
+                cout << COLORS["RESET"];
+            }
+        }
         cout << endl;
     }
     cout << "----------------------" << endl;
     cout << "1\t2\t3\t4\t5\t6" << endl;
-    cout << "\n\t" << currGame.playerNames[1] << "'s Points: " << currGame.score[1] << endl;
+    cout << COLORS[currGame.playerColors[1][0]] << "\n\t" << currGame.playerNames[1] << "'s Points: " << currGame.score[1] << endl;
+    cout << COLORS["RESET"];
 }
 
 
-bool checkEmptyMove(gameData currGame, int player, int house){
-    if (currGame.board[player][house] + house > 5){
+bool checkEmptyMove(gameData currGame, int player, int house){ // Checks if a move is valid
+    if (currGame.board[player][house-1] + house > 6){
         return true;
     }
     else{
@@ -56,45 +60,42 @@ bool checkEmptyMove(gameData currGame, int player, int house){
 
 
 
-int showValidMoves(bool available[]){
+int getValidMove(vector<int> available){
 
-    int counter = 0;
     int position;
-
 
     cout << "Available options: ";
 
-    for (int i = 0; i < 6; ++i) {
-        if (available[i]){
-            counter ++;
-            cout << i + 1 << " ";
+    for (int i = 0; i < available.size(); ++i) {
+        cout << available[i] << " ";
+    }
+    cout << endl;
+
+    while (1){
+        bool valid = readInt(position); // PROGRAM BREAKS IF I ENTER LETTER
+        if (valid && find(available.begin(), available.end(), position) != available.end()){ // find retorna um iterador, se não houver elemento igual, vai retornar o final do iterador.
+            break;
+        } else{
+            cout << "Invalid, re-enter: ";
         }
     }
-    if(counter == 0){
-        return -1; // My definition of invalid
-    }
-    else{
-        while (1){
-            bool valid = readInt(position);
-            if (valid && available[position-1]){
-                break;
-            } else{
-                cout << "Invalid, re-enter: ";
-            }
-        }
-        return position;
-    }
+    return position;
 }
 
 
-bool round(gameData &currGame, int player) {
-
+bool round(gameData &currGame, int player, bool hasBot = true) {
     bool finalState; // To be able to know if we skip a player or not in gameManager
 
     int position;
     int LEN = sizeof(currGame.board[player])/sizeof(int);
     int playerPieces = sumArray(currGame.board[player], LEN); // Check if player has no pieces in his side
-    bool availableMoves[6];
+    vector<int> availableMoves = {};
+
+
+    cout << endl << endl;
+
+
+
 
     if (playerPieces == 0){
 
@@ -104,12 +105,13 @@ bool round(gameData &currGame, int player) {
         player = mod(player+1,2); // Skip to the next player
         cout << currGame.playerNames[player] << " you're on." << endl;
 
-        for (int i = 0; i < 6; i ++ ){
-            availableMoves[i] = checkEmptyMove(currGame, player, i);
+        for (int i = 1; i < 7; i++){
+            if (checkEmptyMove(currGame, player, i)){ // changed this and
+                availableMoves.push_back(i);
+            }
         }
 
-        position = showValidMoves(availableMoves);
-        if (position == -1) {
+        if (availableMoves.size() == 0){
             cout << endl << "There are no moves left! The game has ended..." << endl;
             for (int i = 0; i < 6; ++i) {
                 currGame.score[player] += currGame.board[player][i];
@@ -117,19 +119,37 @@ bool round(gameData &currGame, int player) {
                 return finalState;
             }
         }
-    }else{
+
+        if (hasBot && player == 1){
+            cout << endl << "Bot " << currGame.playerNames[1] << " is choosing a position: " << flush;
+            position = getBotMove(currGame, availableMoves);
+            cout << position;
+        }
+        else{
+            position = getValidMove(availableMoves);
+        }
+
+    }else {
 
         finalState = true;
 
-        cout << "\nThis is your turn " << currGame.playerNames[player] << "\nPlease enter a position to remove your seeds (1-6): ";
 
-        while(1){
-            bool valid = readInt(position);
-            if (!valid || position < 1 || position > 6 || currGame.board[player][position-1] == 0){
-                cout << "Not valid, re-enter: ";
-                continue;
+        if (hasBot && player == 1) {
+            cout << endl << "Bot " << currGame.playerNames[1] << " is choosing a position: " << flush;
+            position = getBotMove(currGame);
+            cout << position;
+        }
+        else {
+            cout << "\nThis is your turn " << currGame.playerNames[player]
+                 << "\nPlease enter a position to remove your seeds (1-6): ";
+            while (1) {
+                bool valid = readInt(position);
+                if (!valid || position < 1 || position > 6 || currGame.board[player][position - 1] == 0) {
+                    cout << "Not valid, re-enter: ";
+                    continue;
+                }
+                break;
             }
-            break;
         }
     }
 
@@ -158,7 +178,10 @@ bool round(gameData &currGame, int player) {
 
 
         // Checks if a house can be conquered
-        if (canConquer && (currGame.board[currField][temp] == 2 || currGame.board[currField][temp] == 3)){
+        if (canConquer
+        && player != currField
+        && (currGame.board[currField][temp] == 2
+        || currGame.board[currField][temp] == 3)){
             currGame.score[player] += currGame.board[currField][temp];
             currGame.board[currField][temp] = 0;
         } else{
@@ -171,21 +194,83 @@ bool round(gameData &currGame, int player) {
 
     cout << "\n";
     showBoard(currGame);
+    currGame.rounds++;
     return finalState;
 }
 
 
-void win(int player, gameData currGame){
-    cout << "\n\nGame ended in " << currGame.rounds << "!" << endl;
-    cout << "The winner of the game is " << currGame.playerNames[player] << endl;
+int botAnalyse(gameData &currGame, int position) {
+    bool finalState; // To be able to know if we skip a player or not in gameManager
+
+    int LEN = sizeof(currGame.board[1])/sizeof(int);
+    int playerPieces = sumArray(currGame.board[1], LEN); // Check if player has no pieces in his side
+
+
+    int seeds = currGame.board[1][position-1];
+    currGame.board[1][position-1] = 0;
+
+
+    int currField = 1;
+
+    int temp = position + seeds - 1;
+    bool canConquer = true; // Stays true until the last pieces can be conquered, and so on
+    // Can conquer pieces from the last piece sowed until one house doesnt get conquered
+
+    int seedsCounter = 0;
+
+    for (int i = position + seeds; i > position; i--){ // LOOP MOVE THE SEEDS reversed
+        if(temp > 5) {
+            currField = mod(currField + temp/6, 2); // trabalhar com a divisao inteira para saber se roda o jogador
+            temp = mod(temp, 6);
+        }
+        else if(temp < 0) {
+            currField = mod(currField + 1, 2);
+            temp = 5;
+        }
+        currGame.board[currField][temp] += 1;
+
+
+        // Checks if a house can be conquered
+        if (canConquer
+            && currField != 1
+            && (currGame.board[currField][temp] == 2
+                || currGame.board[currField][temp] == 3))
+        {
+            seedsCounter += currGame.board[currField][temp];
+            currGame.board[currField][temp] = 0;
+        } else{
+            canConquer = false;
+        }
+        temp--;
+    }
+
+    return seedsCounter;
 }
 
 
-void gameManager(gameData currGame) {
+void win(int player, gameData currGame){
+    cout << COLORS[currGame.playerColors[player][0]];
+    cout << "\n\nGame ended in " << currGame.rounds << "!" << endl;
+    sleep(2);
+    // Blinking win text
+    for (int i = 0; i < 4; i++) {
+        clearScreen();
+        sleep(1);
+        cout << "The winner of the game is " << currGame.playerNames[player] << " with " << currGame.score[player] << " points!"<<  endl;
+        sleep(1);
+    }
+}
+
+void tie(gameData currGame){
+    // Blinking win text
+    cout << "\n\nGame ended in " << currGame.rounds << " rounds!" << endl;
+    cout << "This long battle resulted in a tie!" << endl;
+}
+
+void gameManager(gameData currGame, bool hasBot) {
 
     // Choose random player to start
-    srand(time(NULL));
-    int startingPlayer = random()%2; // THIS NOT WORKING, i mean, it actually is, but not very random
+    int startingPlayer = random()%2;
 
     cout << "\nPlayer starting is " << currGame.playerNames[startingPlayer] << ". Good luck!" << endl;
 
@@ -208,23 +293,27 @@ void gameManager(gameData currGame) {
                 }
                 if(currGame.score[0] >= 25){
                     currState = W1;
+                    end = true;
                 }
                 else if(currGame.score[0] == 24 && currGame.score[1] == 24){
                     currState = T;
+                    end = true;
                 }
                 break;
             }
 
             case P2:{
-                bool status = round(currGame, 1);
+                bool status = round(currGame, 1, hasBot);
                 if (status) {
                     currState = P1;
                 }
                 if(currGame.score[1] >= 25){
                     currState = W2;
+                    end = true;
                 }
                 else if(currGame.score[0] == 24 && currGame.score[1] == 24){
                     currState = T;
+                    end = true;
                 }
                 break;
             }
@@ -236,22 +325,27 @@ void gameManager(gameData currGame) {
             case W2:{
                 win(1, currGame);
             }
+
+            case T:{
+                tie();
+            }
         }
     }
 }
 
 
 
-void gameSetup() {
-
-    printf("Setting up...\n");
+void gameSetup(bool hasBot) {
+    cout << COLORS["MAIN_BOLD"];
+    cout << "Setting up..." << endl;
 
     struct gameData currGame;
 
     // Setting starting value in the board
     for (int pl = 0; pl < 2; pl++){
         for (int i = 0; i < 6; i++) {
-            currGame.board[pl][i] = 4*pl;
+            //currGame.board[pl][i] =  pl == 1 ? 4 : 1;
+            currGame.board[pl][i] = 4;
         }
     }
 
@@ -261,7 +355,7 @@ void gameSetup() {
 
     // CHOOSING PLAYERS NAMES
     for (int i = 0; i < 2; i++) {
-        printf("Please enter player's %d name: ", i + 1);
+        cout << "Please enter player's " << i+1 << " name: " << COLORS["MAIN"];
         bool valid;
         string name;
         while (1) {
@@ -278,6 +372,31 @@ void gameSetup() {
             break;
         }
     }
+    cout << COLORS["MAIN_BOLD"];
+    for (int i = 0; i < 2; i++) {
+        cout << endl;
+        cout << "Available colors: " << COLORS["BOLD_RED"] << "red" << COLORS["MAIN_BOLD"] << ", " << COLORS["BOLD_YELLOW"] << "yellow" << COLORS["MAIN_BOLD"] << "," << COLORS["BLUE"] << "blue" << COLORS["MAIN_BOLD"] << "." << endl;
+        cout << "Please enter " << currGame.playerNames[i] << "'s color: " << COLORS["MAIN"];
+        bool valid;
+        string color;
+        while (1) {
+            valid = readString(color);
+            transform(color.begin(), color.end(), color.begin(), ::toupper);
+            if (!valid || (color != "RED" && color != "YELLOW" && color != "BLUE")) {
+                printf("Invalid, re-enter: ");
+                continue;
+            }
+            currGame.playerColors[i][0] = "BOLD_" + color;
+            currGame.playerColors[i][1] = color;
+            if (currGame.playerColors[mod(i-1,2)][1] == currGame.playerColors[i][1]){
+                printf("Cant be same color as the other player, re-enter: ");
+                continue;
+            }
+            break;
+        }
+    }
+    cout << COLORS["MAIN_BOLD"];
     showBoard(currGame);
-    gameManager(currGame);
+    gameManager(currGame, hasBot);
+
 }

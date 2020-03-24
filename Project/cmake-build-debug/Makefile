@@ -39,10 +39,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /snap/clion/103/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /snap/clion/107/bin/cmake/linux/bin/cmake
 
 # The command to remove a file.
-RM = /snap/clion/103/bin/cmake/linux/bin/cmake -E remove -f
+RM = /snap/clion/107/bin/cmake/linux/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/cm
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/snap/clion/103/bin/cmake/linux/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/snap/clion/107/bin/cmake/linux/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/snap/clion/103/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/snap/clion/107/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -122,6 +122,33 @@ Project: cmake_check_build_system
 Project/fast:
 	$(MAKE) -f CMakeFiles/Project.dir/build.make CMakeFiles/Project.dir/build
 .PHONY : Project/fast
+
+bot.o: bot.cpp.o
+
+.PHONY : bot.o
+
+# target to build an object file
+bot.cpp.o:
+	$(MAKE) -f CMakeFiles/Project.dir/build.make CMakeFiles/Project.dir/bot.cpp.o
+.PHONY : bot.cpp.o
+
+bot.i: bot.cpp.i
+
+.PHONY : bot.i
+
+# target to preprocess a source file
+bot.cpp.i:
+	$(MAKE) -f CMakeFiles/Project.dir/build.make CMakeFiles/Project.dir/bot.cpp.i
+.PHONY : bot.cpp.i
+
+bot.s: bot.cpp.s
+
+.PHONY : bot.s
+
+# target to generate assembly for a file
+bot.cpp.s:
+	$(MAKE) -f CMakeFiles/Project.dir/build.make CMakeFiles/Project.dir/bot.cpp.s
+.PHONY : bot.cpp.s
 
 fileManager.o: fileManager.cpp.o
 
@@ -240,6 +267,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... Project"
 	@echo "... edit_cache"
+	@echo "... bot.o"
+	@echo "... bot.i"
+	@echo "... bot.s"
 	@echo "... fileManager.o"
 	@echo "... fileManager.i"
 	@echo "... fileManager.s"

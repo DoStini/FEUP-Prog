@@ -3,4 +3,4 @@ project(Project)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Project main.cpp gameMenu.cpp game.cpp game.h gameMenu.h main.h fileManager.cpp fileManager.h)
+add_executable(Project main.cpp gameMenu.cpp game.cpp game.h gameMenu.h main.h fileManager.cpp fileManager.h bot.cpp bot.h)

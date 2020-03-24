@@ -84,6 +84,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/bot.cpp">
+			<Option target="Project"/>
+		</Unit>
+		<Unit filename="/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/bot.h">
+			<Option target="Project"/>
+		</Unit>
 		<Unit filename="/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/fileManager.cpp">
 			<Option target="Project"/>
 		</Unit>

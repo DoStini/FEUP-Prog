@@ -2,6 +2,7 @@
 #include <map>
 #include "gameMenu.h"
 #include "game.h"
+#include "main.h"
 
 // INCLUIR O PROOPRIO H
 using namespace std;
@@ -13,11 +14,27 @@ using namespace std;
 // best scores
 
 
+
 void play() {
-    gameSetup();
+    cout << "Do you want to play with bot? (Y/N): ";
+    char res;
+    while (1){
+        bool valid = readChar(res);
+        if (!valid || (toupper(res) != 'Y' && toupper(res) != 'N')){
+            cout << "Invalid, re-enter: ";
+            continue;
+        }
+        break;
+    }
+    if (res == 'Y'){
+        gameSetup(true);
+    }
+    else{
+        gameSetup(false);
+    }
 }
 
-void options() {
+void instructions() {
 
 }
 
@@ -39,7 +56,8 @@ void run() {
 
     map<string, char> cmdToChar = { // TO BE USED IN SWITCH CMD, DOESNT ACCEPT STRINGS
             {"play",        'p'},
-            {"options",     'o'},
+            {"rules",       'r'},
+            {"instructions",'i'},
             {"last games",  'l'},
             {"best scores", 'b'},
             {"exit",        'e'},
@@ -50,9 +68,9 @@ void run() {
     while (playing) {
         printf("Please enter a command: \n"
                "Play\n"
-               "Options\n"
+               "Instructions\n"
                "Last Games\n"
-               "Best Scores"
+               "Best Scores\n"
                "Exit\n\n"
                "Choose: ");
 
@@ -71,8 +89,8 @@ void run() {
                 case 'p':
                     play();
                     break;
-                case 'o' :
-                    options();
+                case 'i' :
+                    instructions();
                     break;
                 case 'l':
                     lastGames();

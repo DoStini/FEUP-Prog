@@ -1,9 +1,32 @@
 #include <iostream>
 #include "gameMenu.h"
 #include "game.h"
+#include <vector>
+#include <algorithm>
+#include "main.h"
+#include <map>
 
 
 using namespace std;
+
+map<string, string> COLORS = {
+        {"RESET",       "\u001B[0m"},
+        {"RED",         "\u001B[0;31m"},
+        {"BOLD_RED",    "\u001B[1;31m"},
+        {"YELLOW",       "\u001B[0;33m"},
+        {"BOLD_YELLOW",  "\u001B[1;33m"},
+        {"BLUE",      "\u001B[0;34m"},
+        {"BOLD_BLUE", "\u001B[1;34m"},
+        {"CYAN",        "\u001B[0;36m"},
+        {"BOLD_CYAN",   "\u001B[1;36m"}
+};
+
+
+void clearScreen()
+{
+    cout << "\033[2J";
+    cout.flush();
+}
 
 
 bool readString(string &s) {
@@ -11,8 +34,8 @@ bool readString(string &s) {
     cin >> s;
 
     if (cin.fail()) {
-        cin.ignore(1000, '\n');
         cin.clear();
+        cin.ignore(1000, '\n');
         return false;
     } else if (cin.peek() != '\n') {
         cin.ignore();
@@ -25,8 +48,8 @@ bool readString(string &s) {
 bool readChar(char &c){
     cin >> c;
     if (cin.fail()){
-        cin.ignore(1000, '\n');
         cin.clear();
+        cin.ignore(1000, '\n');
         return false;
     }
     else if (cin.peek() != '\n'){
@@ -41,8 +64,8 @@ bool readChar(char &c){
 bool readInt(int &i){
     cin >> i;
     if (cin.fail()){
-        cin.ignore(1000, '\n');
         cin.clear();
+        cin.ignore(1000, '\n');
         return false;
     }
     else if (cin.peek() != '\n'){
@@ -73,18 +96,11 @@ int sumArray(int array[], int len){
     return sum;
 }
 
-bool valueInArray(int value, int array[]){
-    int size = sizeof(array)/ sizeof(int);
 
-    for(int i = 0; i < size; i++){
-        if(array[i] == value){
-            return true;
-        }
+int main(){
+    COLORS["MAIN_BOLD"] =  COLORS["BOLD_CYAN"];
+    COLORS["MAIN"] = COLORS["CYAN"];
+    while (1){
+        run();
     }
-
-    return false;
-}
-
-int main() {
-    gameSetup();
 }
