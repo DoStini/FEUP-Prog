@@ -7,6 +7,8 @@ using namespace std;
 #ifndef PROJECT_GAME_H
 #define PROJECT_GAME_H
 
+#define ENDGAME 10
+
 struct gameData {
     int board[2][6];
     int score[2];

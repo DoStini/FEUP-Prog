@@ -6,20 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/bot.cpp
-stdio.h
--
-vector
--
-algorithm
--
-iostream
--
-unistd.h
--
-game.h
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/game.h
-
 /home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/bot.h
 game.h
 /home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/game.h
@@ -48,35 +34,7 @@ bot.h
 string
 -
 
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/gameMenu.cpp
-iostream
--
-map
--
-gameMenu.h
 /home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/gameMenu.h
-game.h
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/game.h
-main.h
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/main.h
-
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/gameMenu.h
-
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/main.cpp
-iostream
--
-gameMenu.h
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/gameMenu.h
-game.h
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/game.h
-vector
--
-algorithm
--
-main.h
-/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/main.h
-map
--
 
 /home/andremoreira9/Documents/Faculdade/A1/S2/PROG/Project/main.h
 map

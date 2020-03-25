@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <algorithm>
 #include "gameMenu.h"
 #include "game.h"
 #include "main.h"
@@ -26,7 +27,8 @@ void play() {
         }
         break;
     }
-    if (res == 'Y'){
+    clearScreen();
+    if (toupper(res) == 'Y'){
         gameSetup(true);
     }
     else{
@@ -35,20 +37,27 @@ void play() {
 }
 
 void instructions() {
-
+    cout << << COLORS["MAIN"];
+    cout << "\nAt the beggining of each game you can select if you want to play with a bot." << endl;
+    cout << "You may also choose the players' colors and names. Note they can't be the same!" << endl;
+    cout << "Finally, if both players agree on ending the game press CTRL-Z (on windows) or CTRL-D(on linux)!" << endl << endl;
 }
 
-void lastGames() {
-
+void rules() {
+    cout << "\nSOWING:" << endl;
+    cout << COLORS["MAIN"] << "Players take turns moving the seeds. On a turn, a player chooses one of the six pits under their control.\nThe player removes all seeds from this pit, and distributes them in each pit counter-clockwise from this house, in a process called sowing." << endl << endl;
+    cout << COLORS["MAIN_BOLD"] << "CAPTURING:" << endl;
+    cout << COLORS["MAIN"]<< "After a turn, if the last seed was placed into an opponent's pit that brought its total to two or three, all the seeds in that house are captured and placed in the player's scoring pit.\nIf the previous to last seed also brought an opponent's pit to two or three, these are captured as well, and so on." << endl << endl;
+    cout << COLORS["MAIN_BOLD"] << "EXCEPTION:" << endl;
+    cout << COLORS["MAIN"]<< "If an opponent's pits are all empty, the current player must make a move that gives the opponent seeds.\nIf no such move is possible, the current player captures all seeds in their own territory, ending the board game."<< endl << endl;
+    cout << COLORS["MAIN_BOLD"]<< "END OF GAME:" << endl;
+    cout << COLORS["MAIN"]<< "If a player captures more then halve of all seeds (25 or more), he is a winner.\nIf both players have 24 points, this results in a tie!\nIf the two players agree they entered in an infinite cycle, they can end the game, collecting the seed in each field." << endl << endl << endl;
 }
 
-void bestScores() {
 
-}
-
-
-void exit() {
-
+bool exit() {
+    cout << "Thanks for playing!" << endl;
+    return false;
 }
 
 // MUDAR NOME
@@ -58,19 +67,18 @@ void run() {
             {"play",        'p'},
             {"rules",       'r'},
             {"instructions",'i'},
-            {"last games",  'l'},
-            {"best scores", 'b'},
             {"exit",        'e'},
     };
 
     bool playing = true;
 
     while (playing) {
-        printf("Please enter a command: \n"
+        cout << COLORS["MAIN_BOLD"];
+
+        printf("Please enter a command: \n\n"
                "Play\n"
                "Instructions\n"
-               "Last Games\n"
-               "Best Scores\n"
+               "Rules\n"
                "Exit\n\n"
                "Choose: ");
 
@@ -85,6 +93,7 @@ void run() {
             printf("Input Invalid\n\n");
             cin.clear();
         } else {
+            transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
             switch (cmdToChar[cmd]) {
                 case 'p':
                     play();
@@ -92,15 +101,11 @@ void run() {
                 case 'i' :
                     instructions();
                     break;
-                case 'l':
-                    lastGames();
-                    break;
-                case 'b':
-                    bestScores();
+                case 'r':
+                    rules();
                     break;
                 case 'e':
-                    playing = false;
-                    cout << "Thanks for playing!" << endl;
+                    playing = exit();
                     break;
             }
         }

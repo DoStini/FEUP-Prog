@@ -8,7 +8,7 @@
 
 
 
-int getBotMove(gameData currGame, vector<int> availableMoves = {1, 2, 3, 4, 5, 6});
+int getBotMove(gameData currGame, vector<int> availableMoves);
 
 
 #endif //PROJECT_BOT_H

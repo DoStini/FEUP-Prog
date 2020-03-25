@@ -8,9 +8,8 @@
 
 void play();
 void options();
-void lastGames();
-void bestScores();
-void exit();
+void rules();
+bool exit();
 void run();
 
 

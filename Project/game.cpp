@@ -12,6 +12,7 @@ using namespace std;
 
 
 
+
 enum state {
     INIT,
     P1,
@@ -20,6 +21,8 @@ enum state {
     W2,
     T
 };
+
+
 
 
 void showBoard(gameData currGame){
@@ -83,6 +86,18 @@ int getValidMove(vector<int> available){
 }
 
 
+
+void forceEnd(gameData &currGame){
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 6; ++j) {
+            currGame.score[i] += currGame.board[i][j];
+            currGame.board[i][j] = 0;
+        }
+    }
+}
+
+
+
 bool round(gameData &currGame, int player, bool hasBot = true) {
     bool finalState; // To be able to know if we skip a player or not in gameManager
 
@@ -95,6 +110,7 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
     cout << endl << endl;
 
 
+    cout << COLORS["MAIN_BOLD"];
 
 
     if (playerPieces == 0){
@@ -113,11 +129,8 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
 
         if (availableMoves.size() == 0){
             cout << endl << "There are no moves left! The game has ended..." << endl;
-            for (int i = 0; i < 6; ++i) {
-                currGame.score[player] += currGame.board[player][i];
-                currGame.board[player][i] = 0;
-                return finalState;
-            }
+            forceEnd(currGame);
+            return finalState;
         }
 
         if (hasBot && player == 1){
@@ -136,7 +149,12 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
 
         if (hasBot && player == 1) {
             cout << endl << "Bot " << currGame.playerNames[1] << " is choosing a position: " << flush;
-            position = getBotMove(currGame);
+            for (int i = 1; i < 7; ++i) {
+                if (currGame.board[1][i-1] != 0){
+                    availableMoves.push_back(i);
+                }
+            }
+            position = getBotMove(currGame, availableMoves);
             cout << position;
         }
         else {
@@ -144,6 +162,11 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
                  << "\nPlease enter a position to remove your seeds (1-6): ";
             while (1) {
                 bool valid = readInt(position);
+                if (position == ENDGAME){
+                    cout << endl << "You decided to end the game..." << endl;
+                    forceEnd(currGame);
+                    return false;
+                }
                 if (!valid || position < 1 || position > 6 || currGame.board[player][position - 1] == 0) {
                     cout << "Not valid, re-enter: ";
                     continue;
@@ -250,7 +273,7 @@ int botAnalyse(gameData &currGame, int position) {
 
 void win(int player, gameData currGame){
     cout << COLORS[currGame.playerColors[player][0]];
-    cout << "\n\nGame ended in " << currGame.rounds << "!" << endl;
+    cout << "\n\nGame ended in " << currGame.rounds << " rounds!" << endl;
     sleep(2);
     // Blinking win text
     for (int i = 0; i < 4; i++) {
@@ -259,15 +282,29 @@ void win(int player, gameData currGame){
         cout << "The winner of the game is " << currGame.playerNames[player] << " with " << currGame.score[player] << " points!"<<  endl;
         sleep(1);
     }
+    sleep(2);
+    clearScreen();
 }
 
 void tie(gameData currGame){
     // Blinking win text
     cout << "\n\nGame ended in " << currGame.rounds << " rounds!" << endl;
-    cout << "This long battle resulted in a tie!" << endl;
+    sleep(2);
+    // Blinking win text
+    for (int i = 0; i < 4; i++) {
+        clearScreen();
+        sleep(1);
+        cout << "This long battle resulted in a tie!" << endl;
+        sleep(1);
+    }
+    sleep(2);
+    clearScreen();
+
 }
 
 void gameManager(gameData currGame, bool hasBot) {
+
+    cout << COLORS["MAIN_BOLD"];
 
     // Choose random player to start
     int startingPlayer = random()%2;
@@ -275,6 +312,7 @@ void gameManager(gameData currGame, bool hasBot) {
     cout << "\nPlayer starting is " << currGame.playerNames[startingPlayer] << ". Good luck!" << endl;
 
     enum state currState;
+
     if (startingPlayer == 0){
         currState = P1;
     }
@@ -287,17 +325,19 @@ void gameManager(gameData currGame, bool hasBot) {
     while (!end) {
         switch (currState) {
             case P1:{
+                cout << COLORS["MAIN_BOLD"];
                 bool status = round(currGame, 0);
-                if (status) { // ALTERAR ISTO PARA MAIS ABAIXO PARA SER MAIS EFICIENTE
+                if (status) {
                     currState = P2;
                 }
                 if(currGame.score[0] >= 25){
                     currState = W1;
-                    end = true;
+                }
+                else if(currGame.score[1] >= 25){
+                    currState = W2;
                 }
                 else if(currGame.score[0] == 24 && currGame.score[1] == 24){
                     currState = T;
-                    end = true;
                 }
                 break;
             }
@@ -307,27 +347,34 @@ void gameManager(gameData currGame, bool hasBot) {
                 if (status) {
                     currState = P1;
                 }
-                if(currGame.score[1] >= 25){
+                if(currGame.score[0] >= 25){
+                    currState = W1;
+                }
+                else if(currGame.score[1] >= 25){
                     currState = W2;
-                    end = true;
                 }
                 else if(currGame.score[0] == 24 && currGame.score[1] == 24){
                     currState = T;
-                    end = true;
                 }
                 break;
             }
 
             case W1:{
                 win(0, currGame);
+                end = true;
+                break;
             }
 
             case W2:{
                 win(1, currGame);
+                end = true;
+                break;
             }
 
             case T:{
-                tie();
+                tie(currGame);
+                end = true;
+                break;
             }
         }
     }
@@ -355,6 +402,7 @@ void gameSetup(bool hasBot) {
 
     // CHOOSING PLAYERS NAMES
     for (int i = 0; i < 2; i++) {
+        cout << COLORS["MAIN_BOLD"];
         cout << "Please enter player's " << i+1 << " name: " << COLORS["MAIN"];
         bool valid;
         string name;
@@ -372,11 +420,12 @@ void gameSetup(bool hasBot) {
             break;
         }
     }
-    cout << COLORS["MAIN_BOLD"];
+
     for (int i = 0; i < 2; i++) {
+        cout << COLORS["MAIN_BOLD"];
         cout << endl;
         cout << "Available colors: " << COLORS["BOLD_RED"] << "red" << COLORS["MAIN_BOLD"] << ", " << COLORS["BOLD_YELLOW"] << "yellow" << COLORS["MAIN_BOLD"] << "," << COLORS["BLUE"] << "blue" << COLORS["MAIN_BOLD"] << "." << endl;
-        cout << "Please enter " << currGame.playerNames[i] << "'s color: " << COLORS["MAIN"];
+        cout << "Please enter " << currGame.playerNames[i] << "'s color: " << COLORS["MAIN_BOLD"];
         bool valid;
         string color;
         while (1) {
@@ -398,5 +447,4 @@ void gameSetup(bool hasBot) {
     cout << COLORS["MAIN_BOLD"];
     showBoard(currGame);
     gameManager(currGame, hasBot);
-
 }

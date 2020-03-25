@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "main.h"
 #include <map>
+#include <sstream>
+#include <unistd.h>
 
 
 using namespace std;
@@ -21,11 +23,17 @@ map<string, string> COLORS = {
         {"BOLD_CYAN",   "\u001B[1;36m"}
 };
 
+void gotoxy(int x, int y){
+    ostringstream oss;
+    oss << "\033["<< y << ";"<< x << "H";
+    cout << oss.str();
+}
+
 
 void clearScreen()
 {
     cout << "\033[2J";
-    cout.flush();
+    gotoxy(0, 0);
 }
 
 
@@ -64,6 +72,11 @@ bool readChar(char &c){
 bool readInt(int &i){
     cin >> i;
     if (cin.fail()){
+        if (cin.eof()){
+            cin.clear();
+            cin.ignore(1000, '\n');
+            i = ENDGAME;
+        }
         cin.clear();
         cin.ignore(1000, '\n');
         return false;
@@ -98,9 +111,18 @@ int sumArray(int array[], int len){
 
 
 int main(){
+    clearScreen();
     COLORS["MAIN_BOLD"] =  COLORS["BOLD_CYAN"];
     COLORS["MAIN"] = COLORS["CYAN"];
-    while (1){
-        run();
-    }
+    srand(time(NULL));
+
+    cout << COLORS["BOLD_RED"];
+    cout << "Welcome to Oware by Andre Moreira." << endl;
+    sleep(3);
+    clearScreen();
+    cout << COLORS["BOLD_YELLOW"];
+    cout << "This is an oware game, I hope you have fun. The first commands will be shown after(instructions for program related commands and rules for game rules)." << endl;
+    sleep(5);
+    clearScreen();
+    run();
 }
