@@ -443,10 +443,32 @@ p-values = 1 diferença de indices de p e values (a diferenca em memoria e de 4 
 // EXERICIO 11
 
 
+int ascending(const void *a, const void *b){
+    int x = *(int *) a;
+    int y = *(int *) b;
+
+    return (x - y);
+}
+
+int descending(const void *a, const void *b){
+    int x = *(int *) a;
+    int y = *(int *) b;
+
+    return (y - x);
+}
+
 void testSort(){
     int a[5] = {2,1,6,5,9};
 
-    //qsort()
+    int *ptr = a;
+    int size = sizeof(a)/ sizeof(int);
+    qsort(a, size, sizeof(int), ascending);
+    ptr += size/2;
+    qsort(ptr, size - size/2, sizeof(int), descending);
+
+    for (int i = 0; i < 5; ++i) {
+        cout << a[i] << " ";
+    }
 }
 
 
@@ -483,60 +505,79 @@ size_t findMultValuesInArray(const int *a, int *index,size_t nElem, int value, i
     }
     int counter = 0;
 
-    for (int i = pos1; i < pos2; ++i) {
-        if(a[i] == value){
-            index[counter] = i;
-            counter++;
+    int *ptr = index;
+
+        for (int i = pos1; i < pos2; ++i) {
+            if(*a == value){
+                index = (int *)realloc(index, counter * sizeof(int) + 1);
+                *ptr = i;
+                counter++;
+                ptr++;
+            }
+            a++;
         }
-    }
     return counter;
 }
 
 
-void testing(){
-    int *array = readArray(6);
-    int *index = (int *)(malloc(6 * sizeof(int)));
-    cout << "Counter " << findValueInArray(array, 6, 5) << endl;
-    cout << "index array" << endl;
-    size_t size = findMultValuesInArray(array, index,6, 5);
-    for (int i = 0; i < size; ++i) {
-        cout << index[i] << endl;
+int findValueInArray(const int *pos1, const int *pos2, int value){
+    for (const int *ptr = pos1; ptr != pos2; ptr ++){
+        if(*ptr == value){
+            return ptr - pos1;
+        }
     }
-    free(array);
+    return -1;
+}
+
+
+void testing(){
+    int array[5] = {1,2,3,5,5};
+    int *index = (int *)(malloc(1 * sizeof(int)));
+    *index = -1;
+    //cout << "Counter " << findValueInArray(array, 6, 5) << endl;
+    cout << "index array" << endl;
+    int size = findValueInArray(&array[0], &array[4], 5);
+    cout << size;
     free(index);
 }
 
-int findValueInArray(const int *pos1, const int *pos2, int value){
-    for (int *ptr = pos1; ptr < *pos2; ptr ++){
-        if( (*ptr) == value){
-            return ;
-        }
-    }
 
-}
+
+
+void runGrades();
 
 
 int main() {
     testing();
 }
 
+// EXERFCICO 13
 
 
+void fillGrades(int **studentsGrade, int nStudents, int nQuizes){
+    for (int i = 0; i < nStudents; ++i) {
+        for (int j = 0; j < nQuizes; ++j) {
+            studentsGrade[i][j] = 10 + rand()%11;
+            cout << studentsGrade[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
 
 
+void runGrades(){
+    int nStudents = 5;
+    int nQuizes = 5;
 
+    int **studentsGrade = (int **) (malloc(nStudents * sizeof(int *)));
 
+    int **line = studentsGrade;
 
+    for (int i = 0; i < nQuizes; ++i) {
+        *line = (int *) (malloc(nQuizes * sizeof(int)));
+        line++;
+    }
 
+    fillGrades(studentsGrade, nStudents, nQuizes);
 
-
-
-
-
-
-
-
-
-
-
-
+}

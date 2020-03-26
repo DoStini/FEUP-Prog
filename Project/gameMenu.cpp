@@ -17,6 +17,12 @@ using namespace std;
 
 
 void play() {
+
+    /*
+     * The function that will start the game, asking if we want a bot or not, and calling the game setup.
+     */
+
+
     cout << "Do you want to play with bot? (Y/N): ";
     char res;
     while (1){
@@ -37,13 +43,23 @@ void play() {
 }
 
 void instructions() {
-    cout << << COLORS["MAIN"];
+
+    /*
+     * Prints out the instructions
+     */
+
+    cout << COLORS["MAIN"];
     cout << "\nAt the beggining of each game you can select if you want to play with a bot." << endl;
     cout << "You may also choose the players' colors and names. Note they can't be the same!" << endl;
     cout << "Finally, if both players agree on ending the game press CTRL-Z (on windows) or CTRL-D(on linux)!" << endl << endl;
 }
 
 void rules() {
+
+    /*
+    * Prints out the rules
+    */
+
     cout << "\nSOWING:" << endl;
     cout << COLORS["MAIN"] << "Players take turns moving the seeds. On a turn, a player chooses one of the six pits under their control.\nThe player removes all seeds from this pit, and distributes them in each pit counter-clockwise from this house, in a process called sowing." << endl << endl;
     cout << COLORS["MAIN_BOLD"] << "CAPTURING:" << endl;
@@ -55,13 +71,13 @@ void rules() {
 }
 
 
-bool exit() {
-    cout << "Thanks for playing!" << endl;
-    return false;
-}
-
 // MUDAR NOME
 void run() {
+
+    /*
+     * The main function in the game, manages the main menu.
+     */
+
 
     map<string, char> cmdToChar = { // TO BE USED IN SWITCH CMD, DOESNT ACCEPT STRINGS
             {"play",        'p'},
@@ -105,7 +121,8 @@ void run() {
                     rules();
                     break;
                 case 'e':
-                    playing = exit();
+                    cout << "Thanks for playing!" << endl;
+                    playing = false;
                     break;
             }
         }

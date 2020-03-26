@@ -20,7 +20,6 @@ struct gameData {
 
 void gameSetup(bool hasBot);
 bool round(gameData &currGame, int player, bool hasBot);
-int botAnalyse(gameData &currGame, int position);
 
 
 #endif //PROJECT_GAME_H

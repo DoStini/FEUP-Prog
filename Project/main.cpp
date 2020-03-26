@@ -37,6 +37,14 @@ void clearScreen()
 }
 
 
+/*
+ * All of the functions: readString, readChar, redInt are use to get an input
+ *
+ * @param variable - variable to store the value of the reading
+ * @return bool stating if there was an error in the reading or not
+ */
+
+
 bool readString(string &s) {
 
     cin >> s;
@@ -91,6 +99,11 @@ bool readInt(int &i){
 }
 
 int mod(int a,int b){
+
+    /*
+     * Returns true modulos function
+     */
+
     if (a < 0){
         return a%b + b;
     }
@@ -100,6 +113,11 @@ int mod(int a,int b){
 }
 
 int sumArray(int array[], int len){
+
+    /*
+     * Sums an array of integers
+     */
+
     int sum = 0;
 
     for(int i = 0; i < len; i++){
@@ -111,10 +129,11 @@ int sumArray(int array[], int len){
 
 
 int main(){
+    srand(time(NULL));
+
     clearScreen();
     COLORS["MAIN_BOLD"] =  COLORS["BOLD_CYAN"];
     COLORS["MAIN"] = COLORS["CYAN"];
-    srand(time(NULL));
 
     cout << COLORS["BOLD_RED"];
     cout << "Welcome to Oware by Andre Moreira." << endl;
