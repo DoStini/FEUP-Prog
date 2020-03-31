@@ -12,7 +12,6 @@ using namespace std;
 
 
 
-
 enum state {
     INIT,
     P1,
@@ -115,8 +114,6 @@ int getValidMove(vector<int> available){
 
 
 void forceEnd(gameData &currGame){
-
-
     /*
      * A function called when a game has to end early on:
      *      Due to players deciding game enetered in an infinite cycle
@@ -136,7 +133,90 @@ void forceEnd(gameData &currGame){
 
 
 
-bool round(gameData &currGame, int player, bool hasBot = true) {
+void spreadSeeds(gameData &currGame, int player, int position, int seeds){
+
+    /*
+    * A function to fill the board according to the number of seeds and the position chosen by the player by changing game data through reference.
+    * @param currGame - Current game's data
+    * @param player - the player who made the move
+    * @param position - the position chosen by the player (1->6)
+    * @param seeds - the number of seeds to be filled along the board
+    *
+    */
+
+    int initialIndex = position - 1;                    // Since position is an integer related to the house number (1 -> 6), the respective index of the board is position-1.
+    int currField = player;                             // Curr field refers to the player where we are putting seeds
+
+    currGame.board[player][position-1] = 0;             // Removes the seeds from the house
+
+    int temp = position - 1;
+
+    for (int i = position; i < position + seeds; i++){
+
+        if (currField == player && initialIndex == temp){
+            temp++;                                            // Used to know if we are not putting seeds in our initial house again
+        }
+
+        if(temp > 5) {
+            currField = mod(currField + temp/6, 2);     // Curr field is changed if the seeds are in the other field.
+            temp = mod(temp, 6);                           // currField+1  changes player  temp/6 verifies if temp didnt return to the initial player
+        }                                                     // if temp = 7 -> index is 1 of player 2. 7/6=1 (rotates player)
+
+        currGame.board[currField][temp]++;
+        temp++;
+    }
+}
+
+
+void conquerSeeds(gameData &currGame, int player, int position, int seeds){
+
+    /*
+    * A function to conquer pieces, by changing currgame through reference.
+    *
+    * @param currGame - Current game's data
+    * @param player - the player who made the move
+    * @param position - the position chosen by the player (1->6)
+    * @param seeds - the number of seeds that were filled along the board
+    *
+    */
+
+    bool canConquer = true;                             // Stays true until the last pieces can be conquered, and so on
+    // Can conquer pieces from the last piece sowed until one house doesnt get conquered
+    int temp = position + seeds + seeds/12 - 1;             // seeds/12 will indicate if there was a skip to our initial house and how many
+    int currField = player;
+
+    for (int i = 0; i < seeds; ++i) {
+        if(temp > 5) {
+            currField = mod(currField + temp/6, 2);     // Curr field is changed if the seeds are in the other field.
+            temp = mod(temp, 6);                           // currField+1  changes player  temp/6 verifies if temp didnt return to the initial player
+        }                                                     // if temp = 7 -> index is 1 of player 2. 7/6=1 (rotates player)
+        else if(temp < 0) {                                   // if temp = 12 -> index is 1 of player 1. 12/6=2 (doesnt rotate as 2mod2 = 0)
+            currField = mod(currField + 1, 2);
+            temp = 5;
+        }
+
+        if (currField == player){
+            break;
+        }
+
+        // Checks if a house can be conquered
+        if (currGame.board[currField][temp] == 2
+            || currGame.board[currField][temp] == 3)
+        {
+            currGame.score[player] += currGame.board[currField][temp];
+            currGame.board[currField][temp] = 0;
+        } else{
+            break;                               // If one of the houses fails to conquer, the next ones wont be conquered as well
+        }
+
+        temp--;
+    }
+}
+
+
+
+
+bool round(gameData &currGame, int player, bool hasBot) {
 
     /*Manages one round per player
      * @param recieves a reference of the current game data
@@ -154,9 +234,19 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
 
 
     cout << endl;
-
-
     cout << COLORS["MAIN_BOLD"];
+
+
+    /*
+     * The next part of the program has the objective of trying to get an input, if possible.
+     * Divided into two parts:
+     *      1) If the currents player's field is empty, the player will change and the program will show the possible
+     *    options for him to play, in order to continue the game.
+     *
+     *      2) The player can continue and choose any house which is not empty
+     * Final state is a variable that identifies that 1) occurred. If it happened, current state cannot change because
+     *the player changed inside this function, so the next player stays the same stated in currState defined in gameManager().
+     */
 
 
     if (playerPieces == 0){
@@ -169,12 +259,12 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
         finalState = false;  // Because we are already changing player in this section, currState will stay as the player who had no options to play
 
         cout << currGame.playerNames[player] << " you are out of options, ";
-        player = mod(player+1,2); // Currently skipping to the next player
+        player = mod(player+1,2);                       // Currently skipping to the next player
         cout << currGame.playerNames[player] << " you're on." << endl;
 
         for (int i = 1; i < 7; i++){
             if (checkEmptyMove(currGame, player, i)){
-                availableMoves.push_back(i);     // Checking available moves that allow other player to keep playing
+                availableMoves.push_back(i);                    // Checking available moves that allow other player to keep playing
             }
         }
 
@@ -184,9 +274,9 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
             return finalState;
         }
 
-        else if (hasBot && player == 1){    // If a bot is playing, can only be second player.
+        else if (hasBot && player == 1){                        // If a bot is playing, can only be second player.
             cout << endl << "Bot " << currGame.playerNames[1] << " is choosing a position: " << flush;
-            position = getBotMove(currGame, availableMoves);   // Get a seed position, chosen by the bot
+            position = getBotMove(currGame, availableMoves);    // Get a seed position, chosen by the bot
             cout << position;
         }
         else{   // Get a seed position, chosen by the human player
@@ -201,13 +291,13 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
             cout << endl << "Bot " << currGame.playerNames[1] << " is choosing a position: " << flush;
             for (int i = 1; i < 7; ++i) {
                 if (currGame.board[1][i-1] != 0){
-                    availableMoves.push_back(i);    // Checks the positions that aren't zero (You cant choose an empty house)
+                    availableMoves.push_back(i);                    // Checks the positions that aren't zero (You cant choose an empty house)
                 }
             }
             position = getBotMove(currGame, availableMoves);
             cout << position;
         }
-        else {   // If there is no bot, human player will get prompted to give an input
+        else {                                                      // If there is no bot, human player will get prompted to give an input
             cout << "\nThis is your turn " << currGame.playerNames[player]
                  << "\nPlease enter a position to remove your seeds (1-6): ";
             while (1) {
@@ -226,46 +316,32 @@ bool round(gameData &currGame, int player, bool hasBot = true) {
         }
     }
 
-    /*
-     * Since position is an integer related to the house number (1 -> 6), the respective index of the board is position-1.
-     */
 
 
     int seeds = currGame.board[player][position-1];     // Gets the number of seeds in the chosen house
-    currGame.board[player][position-1] = 0;             // Removes the seeds from the house
+    int enemyTempField[6];
 
-    int currField = player;                             // Curr field refers to the player where we are putting seeds
+    spreadSeeds(currGame, player, position, seeds);
 
-    int temp = position + seeds - 1;                    // Temp refers to the last house and will be used as an index to access players' houses
-    bool canConquer = true;                             // Stays true until the last pieces can be conquered, and so on
-                                                        // Can conquer pieces from the last piece sowed until one house doesnt get conquered
+    copy(begin(currGame.board[mod(player+1, 2)]), end(currGame.board[mod(player+1, 2)]), begin(enemyTempField));
+                                                        // Copies the enemy board to later check the validity
 
-    for (int i = position + seeds; i > position; i--){
-        if(temp > 5) {
-            currField = mod(currField + temp/6, 2);     // Curr field is changed if the seeds are in the other field.
-            temp = mod(temp, 6);                           // currField+1  changes player  temp/6 verifies if temp didnt return to the initial player
-        }                                                     // if temp = 7 -> index is 1 of player 2. 7/6=1 (rotates player)
-        else if(temp < 0) {                                   // if temp = 12 -> index is 1 of player 1. 12/6=2 (doesnt rotate as 2mod2 = 0)
-            currField = mod(currField + 1, 2);
-            temp = 5;
-        }
-        currGame.board[currField][temp] += 1;
+    conquerSeeds(currGame, player, position, seeds);
 
 
-        // Checks if a house can be conquered
-        if (canConquer
-        && player != currField                          // Not able to conquer own seeds
-        && (currGame.board[currField][temp] == 2
-        || currGame.board[currField][temp] == 3)
-        ){
-            currGame.score[player] += currGame.board[currField][temp];
-            currGame.board[currField][temp] = 0;
-        } else{
-            canConquer = false;                         // If one of the houses fails to conquer, the next ones wont be conquered as well
-        }
-        temp--;
+    /*
+     * The next condition will ensure the current player didnt conquer every piece of the enemy player's field
+     * This is an invalid move, according to the game rules:
+     * "However, if a move would capture all of an opponent's seeds, the capture is forfeited, and the seeds are instead left on the board." - Wikipedia
+     * int enemyTempField is being used in the same way as board, it just doesnt get captured, so it stays with all the seeds.
+     */
+
+    if (sumArray(currGame.board[mod(player+1, 2)], 6) == 0         // Ensures enemy player has not 0 seeds
+        && sumArray(currGame.board[player], 6 ) != 0)                           // Ensures the game has not ended
+    {
+         copy(begin(enemyTempField), end(enemyTempField), begin(currGame.board[mod(player+1, 2)]));
+         cout << "You were not able to conquer those enemy's houses, because he would have 0 pieces after that move. " << endl;
     }
-
 
 
     cout << "\n";
@@ -355,7 +431,7 @@ void gameManager(gameData currGame, bool hasBot) {
         switch (currState) {
             case P1:{
                 cout << COLORS["MAIN_BOLD"];
-                bool status = round(currGame, 0);  // Round function returns if the player will be skipped or not
+                bool status = round(currGame, 0, hasBot);  // Round function returns if the player will be skipped or not
                 if (status) {
                     currState = P2;
                 }
@@ -389,13 +465,13 @@ void gameManager(gameData currGame, bool hasBot) {
             }
 
             case W1:{
-                win(0, currGame);
+                win(currGame, 0);
                 end = true;
                 break;
             }
 
             case W2:{
-                win(1, currGame);
+                win(currGame, 1);
                 end = true;
                 break;
             }
@@ -418,11 +494,15 @@ void gameSetup(bool hasBot) {
     struct gameData currGame;
 
 
+    string botNames[] = {"BOT Harold", "BOT John", "BOT Dustini", "BOT Adrian", "BOT Brett", "BOT Gabe", "BOT Normie", "BOT Fatman"};
+
+
     for (int pl = 0; pl < 2; pl++){                     // Setting starting value in the board
         for (int i = 0; i < 6; i++) {
             currGame.board[pl][i] = 4;
         }
     }
+
 
     currGame.score[0] = 0;
     currGame.score[1] = 0;
@@ -434,19 +514,26 @@ void gameSetup(bool hasBot) {
         cout << "Please enter player's " << i+1 << " name: " << COLORS["MAIN"];
         bool valid;
         string name;
-        while (1) {                                     // Just a basic loop to ensure user input is valid
-            valid = readString(name);
-            if (!valid) {
-                printf("Invalid, re-enter: ");
-                continue;
+        if(!(hasBot && i==1)){
+            while (1) {                                     // Just a basic loop to ensure user input is valid
+                valid = readString(name);
+                if (!valid) {
+                    printf("Invalid, re-enter: ");
+                    continue;
+                }
+                currGame.playerNames[i] = name;
+                if (currGame.playerNames[mod(i+1,2)] == currGame.playerNames[i]){   // Checks if the other player has the same name
+                    printf("Cant be same name as the other player, re-enter: ");
+                    continue;
+                }
+                break;
             }
-            currGame.playerNames[i] = name;
-            if (currGame.playerNames[mod(i+1,2)] == currGame.playerNames[i]){   // Checks if the other player has the same name
-                printf("Cant be same name as the other player, re-enter: ");
-                continue;
-            }
-            break;
         }
+        else{
+            currGame.playerNames[1] = botNames[rand()%8];
+            cout << currGame.playerNames[1];
+        }
+
     }
 
     for (int i = 0; i < 2; i++) {

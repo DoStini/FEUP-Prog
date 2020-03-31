@@ -11,8 +11,8 @@ using namespace std;
 // 4 menu options:
 // play
 // options
-// last game scores
-// best scores
+// rules
+// instructions
 
 
 
@@ -99,15 +99,11 @@ void run() {
                "Choose: ");
 
         string cmd;
-        cin >> cmd;
-        // Use here Read String
-        if (cin.fail()) {
-            printf("Input Invalid\n\n");
-            cin.ignore(1000, '\n');
-            cin.clear();
-        } else if (cin.peek() != '\n') {
-            printf("Input Invalid\n\n");
-            cin.clear();
+
+        bool valid = readString(cmd);
+
+        if (!valid) {
+            cout << "Input invalid, reenter." << endl;
         } else {
             transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
             switch (cmdToChar[cmd]) {
@@ -123,6 +119,9 @@ void run() {
                 case 'e':
                     cout << "Thanks for playing!" << endl;
                     playing = false;
+                    break;
+                default:
+                    cout << "Invalid, please reenter.";
                     break;
             }
         }

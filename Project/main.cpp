@@ -54,7 +54,7 @@ bool readString(string &s) {
         cin.ignore(1000, '\n');
         return false;
     } else if (cin.peek() != '\n') {
-        cin.ignore();
+        cin.ignore(1000, '\n');
         return false;
     } else {
         return true;
@@ -129,6 +129,7 @@ int sumArray(int array[], int len){
 
 
 int main(){
+
     srand(time(NULL));
 
     clearScreen();

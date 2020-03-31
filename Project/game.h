@@ -20,6 +20,6 @@ struct gameData {
 
 void gameSetup(bool hasBot);
 bool round(gameData &currGame, int player, bool hasBot);
-
+void spreadSeeds(gameData &currGame, int player, int position, int seeds);
 
 #endif //PROJECT_GAME_H

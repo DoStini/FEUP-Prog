@@ -3,6 +3,7 @@
 
 CMakeFiles/Project.dir/bot.cpp.o: ../bot.cpp
 CMakeFiles/Project.dir/bot.cpp.o: ../game.h
+CMakeFiles/Project.dir/bot.cpp.o: ../main.h
 
 CMakeFiles/Project.dir/fileManager.cpp.o: ../fileManager.cpp
 CMakeFiles/Project.dir/fileManager.cpp.o: ../gameMenu.h
