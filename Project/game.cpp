@@ -183,33 +183,15 @@ void conquerSeeds(gameData &currGame, int player, int position, int seeds){
     bool canConquer = true;                             // Stays true until the last pieces can be conquered, and so on
     // Can conquer pieces from the last piece sowed until one house doesnt get conquered
     int temp = position + seeds + seeds/12 - 1;             // seeds/12 will indicate if there was a skip to our initial house and how many
-    int currField = player;
+    int currField = mod(player + temp/6, 2);     // Curr field is changed if the seeds are in the other field.
+    temp = temp % 6;
 
-    for (int i = 0; i < seeds; ++i) {
-        if(temp > 5) {
-            currField = mod(currField + temp/6, 2);     // Curr field is changed if the seeds are in the other field.
-            temp = mod(temp, 6);                           // currField+1  changes player  temp/6 verifies if temp didnt return to the initial player
-        }                                                     // if temp = 7 -> index is 1 of player 2. 7/6=1 (rotates player)
-        else if(temp < 0) {                                   // if temp = 12 -> index is 1 of player 1. 12/6=2 (doesnt rotate as 2mod2 = 0)
-            currField = mod(currField + 1, 2);
-            temp = 5;
-        }
-
-        if (currField == player){
-            break;
-        }
-
-        // Checks if a house can be conquered
-        if (currGame.board[currField][temp] == 2
-            || currGame.board[currField][temp] == 3)
-        {
+    if (currField != player){
+        while (temp >= 0 && (currGame.board[currField][temp] == 2 || currGame.board[currField][temp] == 3)){
             currGame.score[player] += currGame.board[currField][temp];
             currGame.board[currField][temp] = 0;
-        } else{
-            break;                               // If one of the houses fails to conquer, the next ones wont be conquered as well
+            temp --;
         }
-
-        temp--;
     }
 }
 
@@ -325,7 +307,7 @@ bool round(gameData &currGame, int player, bool hasBot) {
 
     copy(begin(currGame.board[mod(player+1, 2)]), end(currGame.board[mod(player+1, 2)]), begin(enemyTempField));
                                                         // Copies the enemy board to later check the validity
-
+    int prevScore = currGame.score[player];
     conquerSeeds(currGame, player, position, seeds);
 
 
@@ -337,9 +319,10 @@ bool round(gameData &currGame, int player, bool hasBot) {
      */
 
     if (sumArray(currGame.board[mod(player+1, 2)], 6) == 0         // Ensures enemy player has not 0 seeds
-        && sumArray(currGame.board[player], 6 ) != 0)                           // Ensures the game has not ended
+        && sumArray(currGame.board[player], 6 ) != 0)                           // Ensures the game has not ended in this move
     {
          copy(begin(enemyTempField), end(enemyTempField), begin(currGame.board[mod(player+1, 2)]));
+         currGame.score[player] = prevScore;
          cout << "You were not able to conquer those enemy's houses, because he would have 0 pieces after that move. " << endl;
     }
 

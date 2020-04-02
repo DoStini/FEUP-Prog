@@ -84,6 +84,7 @@ bool readInt(int &i){
             cin.clear();
             cin.ignore(1000, '\n');
             i = ENDGAME;
+            return true;
         }
         cin.clear();
         cin.ignore(1000, '\n');
