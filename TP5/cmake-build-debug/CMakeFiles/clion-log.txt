@@ -1,4 +1,4 @@
-/snap/clion/107/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/andremoreira9/Documents/Faculdade/A1/S2/PROG/TP5
+/snap/clion/107/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/andremoreira9/Documents/Faculdade/A1/S2/TP5
 -- The C compiler identification is GNU 7.5.0
 -- The CXX compiler identification is GNU 7.5.0
 -- Check for working C compiler: /usr/bin/cc
@@ -15,4 +15,4 @@
 -- Detecting CXX compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/andremoreira9/Documents/Faculdade/A1/S2/PROG/TP5/cmake-build-debug
+-- Build files have been written to: /home/andremoreira9/Documents/Faculdade/A1/S2/TP5/cmake-build-debug

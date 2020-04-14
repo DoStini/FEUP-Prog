@@ -1,4 +1,4 @@
-# Install script for directory: /home/andremoreira9/Documents/Faculdade/A1/S2/PROG/TP5
+# Install script for directory: /home/andremoreira9/Documents/Faculdade/A1/S2/TP5
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/TP5/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/andremoreira9/Documents/Faculdade/A1/S2/TP5/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
