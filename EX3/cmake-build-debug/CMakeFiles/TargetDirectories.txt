@@ -1,0 +1,3 @@
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/EX3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/EX3/cmake-build-debug/CMakeFiles/EX3.dir
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/EX3/cmake-build-debug/CMakeFiles/edit_cache.dir

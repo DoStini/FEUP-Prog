@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/andremoreira9/Documents/Faculdade/A1/S2/TP5/main.cpp
+/home/andremoreira9/Documents/Faculdade/A1/S2/PROG/TP5/main.cpp
 iostream
 -
 string
@@ -18,5 +18,9 @@ vector
 sstream
 -
 algorithm
+-
+fstream
+-
+iomanip
 -
 
