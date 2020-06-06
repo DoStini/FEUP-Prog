@@ -320,6 +320,109 @@ int testIntersection(){
 
 
 
+// Exercicio 8
+template <typename T>
+T maxVec(const std::vector<T> &vec){
+    return *std::max_element(vec.begin(), vec.end());
+}
+
+
+template <class T>
+class Vector
+{
+public:
+    Vector();
+    Vector(unsigned int size);
+    Vector(unsigned int size, const T & initial);
+    Vector(const Vector<T> & v);
+    ~Vector();
+    size_t size() const;
+    bool empty() const;
+    T & front();
+    T & back();
+    T & at(size_t index);
+    void push_back(const T & value);
+    void pop_back();
+    void clear();
+private:
+    T * buffer;
+    size_t bufferSize; // add an attribute 'size' if you find it useful
+};
+
+template <class T>
+Vector<T>::Vector() {
+    buffer = (T *) malloc(0);
+    bufferSize = 0;
+}
+template <class T>
+Vector<T>::Vector(unsigned int size) {
+    bufferSize = size* sizeof(T);
+    buffer = (T *) calloc(bufferSize, 0);
+}
+template <class T>
+Vector<T>::Vector(unsigned int size, const T & initial) {
+    bufferSize = size * sizeof(T);
+    buffer = (T *) calloc(bufferSize, initial);
+}
+template <class T>
+Vector<T>::Vector(const Vector<T> & v) {
+    bufferSize = v.size()  * sizeof(T);
+    buffer = (T *) malloc(bufferSize);
+    for (int i = 0; i < bufferSize; ++i) {
+        buffer[i] = v[i];
+    }
+}
+template <class T>
+Vector<T>::~Vector() {
+    free(buffer);
+}
+template <class T>
+size_t Vector<T>::size() const {
+    return bufferSize/sizeof(T);
+}
+template <class T>
+bool Vector<T>::empty() const{
+    return bufferSize == 0;
+}
+template <class T>
+void Vector<T>::push_back(const T &value) {
+    bufferSize += sizeof(T);
+    buffer = (T *) realloc(buffer, bufferSize);
+    buffer[bufferSize / sizeof(T)-1] = value;
+}
+template <class T>
+void Vector<T>::pop_back() {
+    bufferSize -= sizeof(T);
+    buffer = (T *) realloc(buffer, bufferSize);
+}
+
+
+// exercise 9
+
+bool cmp(std::string s1, std::string s2){
+    return s1 > s2;
+}
+
+void removeDup1(std::vector<std::string> &words){
+    std::sort(words.begin(), words.end());
+
+    int i = 0;
+    while ( i < words.size()){
+        if (i != 0 && words[i] == words[i-1]){
+            words.erase(words.begin() + i);
+            continue;
+        }
+        i++;
+    }
+}
+void removeDup2(std::vector<std::string> &words){
+    std::sort(words.begin(), words.end());
+    auto last = std::unique(words.begin(), words.end());
+    words.erase(last, words.end());
+}
+
+
+
 
 // Exericio 15
 bool operator==(const Date &left, const Date &right){
